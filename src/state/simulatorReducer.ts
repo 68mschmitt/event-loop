@@ -27,6 +27,20 @@ export function simulatorReducer(
   return produce(state, (draft) => {
     switch (action.type) {
       case 'STEP_FORWARD': {
+        // Check if simulation is complete before advancing
+        const isComplete = (
+          draft.callStack.length === 0 &&
+          draft.microQueue.length === 0 &&
+          draft.macroQueue.length === 0 &&
+          draft.rafQueue.length === 0 &&
+          draft.webApis.size === 0
+        );
+        
+        if (isComplete) {
+          // Don't advance if simulation is already complete
+          break;
+        }
+        
         // Create snapshot of current state before advancing
         const snapshot = createSnapshot(draft, draft.stepIndex);
         draft.history = addSnapshotToHistory(draft.history, snapshot);
@@ -60,12 +74,14 @@ export function simulatorReducer(
         // Get the very first snapshot (initial state)
         if (draft.history.length > 0) {
           const firstSnapshot = draft.history[0];
-          const restoredState = restoreFromSnapshot(firstSnapshot);
-          
-          // Preserve only the initial snapshot
-          const initialHistory = [firstSnapshot];
-          Object.assign(draft, restoredState);
-          draft.history = initialHistory;
+          if (firstSnapshot) {
+            const restoredState = restoreFromSnapshot(firstSnapshot);
+            
+            // Preserve only the initial snapshot
+            const initialHistory = [firstSnapshot];
+            Object.assign(draft, restoredState);
+            draft.history = initialHistory;
+          }
         }
         break;
       }

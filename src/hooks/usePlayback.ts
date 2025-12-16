@@ -49,9 +49,17 @@ export function usePlayback(): PlaybackState & PlaybackControls {
   const historyLength = useSimulatorSelector(state => state.history.length);
   const currentStep = useSimulatorSelector(state => state.history.length);
   
-  // Check if we can step forward by checking if we're not at the end
-  // This is a simplified check - in a real scenario, you'd check if simulation can continue
-  const canStepForward = true; // Allow stepping forward to generate new steps
+  // Check if we can step forward by checking if simulation is not complete
+  const canStepForward = useSimulatorSelector(state => {
+    // Simulation can continue if any of these conditions are true:
+    return (
+      state.callStack.length > 0 ||
+      state.microQueue.length > 0 ||
+      state.macroQueue.length > 0 ||
+      state.rafQueue.length > 0 ||
+      state.webApis.size > 0
+    );
+  });
   
   const totalSteps = historyLength;
   

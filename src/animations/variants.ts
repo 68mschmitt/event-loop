@@ -21,7 +21,6 @@ export const taskNodeVariants: Variants = {
   queued: {
     opacity: 1,
     scale: 1,
-    backgroundColor: 'var(--color-task-queued)',
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
   },
 
@@ -29,7 +28,6 @@ export const taskNodeVariants: Variants = {
   running: {
     opacity: 1,
     scale: 1.05,
-    backgroundColor: 'var(--color-task-running)',
     boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
   },
 
@@ -37,7 +35,6 @@ export const taskNodeVariants: Variants = {
   completed: {
     opacity: 0.7,
     scale: 0.95,
-    backgroundColor: 'var(--color-task-completed)',
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
   },
 
@@ -45,7 +42,6 @@ export const taskNodeVariants: Variants = {
   error: {
     opacity: 1,
     scale: 1,
-    backgroundColor: 'var(--color-task-error)',
     boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
   },
 };

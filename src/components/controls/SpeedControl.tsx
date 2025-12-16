@@ -44,7 +44,8 @@ export function SpeedControl() {
         setSpeed(speed);
       }
     }
-  }, [setSpeed]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   
   /**
    * Save speed to localStorage when it changes

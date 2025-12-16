@@ -79,6 +79,19 @@ export function tick(state: SimulatorState): SimulatorState {
   }
 
   // Should never reach here if rules are correctly implemented
+  // Log state for debugging
+  console.error('Invalid simulation state - no rule applies:', {
+    callStackLength: state.callStack.length,
+    microQueueLength: state.microQueue.length,
+    macroQueueLength: state.macroQueue.length,
+    rafQueueLength: state.rafQueue.length,
+    webApisSize: state.webApis.size,
+    renderPending: state.renderPending,
+    now: state.now,
+    lastFrameAt: state.lastFrameAt,
+    frameInterval: state.frameInterval,
+    atFrameBoundary: state.now >= state.lastFrameAt + state.frameInterval,
+  });
   throw new Error('Invalid simulation state - no rule applies');
 }
 

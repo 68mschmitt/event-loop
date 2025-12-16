@@ -4,7 +4,7 @@
  * Provides global animation settings and controls.
  */
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import type { AnimationSettings, AnimationMode, AnimationMetrics } from './types';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { SPEED_LIMITS, PERFORMANCE_THRESHOLDS } from './config';
@@ -65,25 +65,25 @@ export function AnimationProvider({
     }));
   }, [preferReducedMotion]);
 
-  const updateSettings = (updates: Partial<AnimationSettings>) => {
+  const updateSettings = useCallback((updates: Partial<AnimationSettings>) => {
     setSettings(prev => ({ ...prev, ...updates }));
-  };
+  }, []);
 
-  const setSpeed = (speed: number) => {
+  const setSpeed = useCallback((speed: number) => {
     const clampedSpeed = Math.max(
       SPEED_LIMITS.MIN,
       Math.min(SPEED_LIMITS.MAX, speed)
     );
-    updateSettings({ speed: clampedSpeed });
-  };
+    setSettings(prev => ({ ...prev, speed: clampedSpeed }));
+  }, []);
 
-  const setMode = (mode: AnimationMode) => {
-    updateSettings({ mode });
-  };
+  const setMode = useCallback((mode: AnimationMode) => {
+    setSettings(prev => ({ ...prev, mode }));
+  }, []);
 
-  const toggleAutoPerformance = () => {
-    updateSettings({ autoAdjustPerformance: !settings.autoAdjustPerformance });
-  };
+  const toggleAutoPerformance = useCallback(() => {
+    setSettings(prev => ({ ...prev, autoAdjustPerformance: !prev.autoAdjustPerformance }));
+  }, []);
 
   const value: AnimationContextValue = {
     settings,
