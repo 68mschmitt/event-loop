@@ -1,7 +1,11 @@
 
 export function TaskInspector() {
   return (
-    <div className="space-y-4">
+    <section 
+      role="region" 
+      aria-label="Task inspector"
+      className="space-y-4"
+    >
       <div>
         <h3 className="text-lg font-semibold text-zinc-200 mb-2">
           Task Inspector
@@ -11,7 +15,10 @@ export function TaskInspector() {
         </p>
       </div>
       
-      <div className="rounded-lg border border-zinc-700 bg-zinc-800/50 p-4">
+      <div 
+        role="status"
+        className="rounded-lg border border-zinc-700 bg-zinc-800/50 p-4"
+      >
         <p className="text-sm text-zinc-400">
           Task lifecycle view and detailed metadata will be added in Phase 8 (Session 8.2).
         </p>
@@ -23,6 +30,6 @@ export function TaskInspector() {
           <li>Lifecycle timeline visualization</li>
         </ul>
       </div>
-    </div>
+    </section>
   );
 }

@@ -22,3 +22,52 @@ body {
   transform: translate3d(0, 0, 0);
   will-change: transform;
 }
+
+/* Screen reader only utility (Phase 7 - Accessibility) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Touch target utility - ensures minimum 44x44px (Phase 7.3 - Mobile) */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Accordion chevron animation (Phase 7.3 - Mobile) */
+.accordion-chevron {
+  transition: transform 300ms cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+[data-state='open'] .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+/* Mobile-specific adjustments (Phase 7.3) */
+@media (max-width: 767px) {
+  .region-console {
+    max-height: 8rem; /* 128px */
+    overflow-y: auto;
+  }
+
+  .task-node {
+    font-size: 0.75rem; /* 12px */
+    padding: 0.25rem 0.5rem;
+  }
+
+  .visualization-region {
+    min-height: 120px;
+    max-height: 200px;
+  }
+}

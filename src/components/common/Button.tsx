@@ -9,9 +9,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800',
-  secondary: 'bg-zinc-700 text-zinc-100 hover:bg-zinc-600 active:bg-zinc-500',
-  ghost: 'bg-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800',
+  primary: 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 focus-visible:ring-blue-500',
+  secondary: 'bg-zinc-700 text-zinc-100 hover:bg-zinc-600 active:bg-zinc-500 focus-visible:ring-zinc-500',
+  ghost: 'bg-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 focus-visible:ring-zinc-600',
 };
 
 const sizeStyles = {
@@ -35,7 +35,7 @@ export function Button({
       className={cn(
         'inline-flex items-center justify-center gap-2',
         'rounded-lg font-medium transition-colors',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         variantStyles[variant],
         sizeStyles[size],
