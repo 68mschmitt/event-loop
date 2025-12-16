@@ -1,3 +1,5 @@
+import { PlaybackControls } from '../controls/PlaybackControls';
+import { SpeedControl } from '../controls/SpeedControl';
 
 export function Toolbar() {
   return (
@@ -7,9 +9,12 @@ export function Toolbar() {
         <h1 className="text-xl font-semibold">Event Loop Visualizer</h1>
       </div>
       
-      <div className="flex items-center gap-4">
-        {/* Placeholders for Session 5.1 controls */}
-        <div className="text-sm text-zinc-500">Controls coming in Phase 5</div>
+      <div className="flex items-center gap-6">
+        {/* Playback Controls */}
+        <PlaybackControls />
+        
+        {/* Speed Control */}
+        <SpeedControl />
       </div>
     </div>
   );

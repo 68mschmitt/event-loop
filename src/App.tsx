@@ -1,10 +1,13 @@
 import { SimulatorProvider } from '@/state/SimulatorContext';
+import { AnimationProvider } from '@/animations/AnimationContext';
 import { AppLayout } from '@/components/layout/AppLayout';
 
 export function App() {
   return (
-    <SimulatorProvider>
-      <AppLayout />
-    </SimulatorProvider>
+    <AnimationProvider>
+      <SimulatorProvider>
+        <AppLayout />
+      </SimulatorProvider>
+    </AnimationProvider>
   );
 }
