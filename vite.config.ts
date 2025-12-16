@@ -1,7 +1,9 @@
 import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
 export default defineConfig({
+  plugins: [react()],
   test: {
     globals: true,
     environment: 'jsdom',
@@ -14,10 +16,21 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '@': resolve(__dirname, './src'),
       '@/core': resolve(__dirname, './src/core'),
       '@/state': resolve(__dirname, './src/state'),
-      '@/ui': resolve(__dirname, './src/ui'),
-      '@/utils': resolve(__dirname, './src/utils'),
+      '@/components': resolve(__dirname, './src/components'),
+      '@/animations': resolve(__dirname, './src/animations'),
+      '@/styles': resolve(__dirname, './src/styles'),
+      '@/lib': resolve(__dirname, './src/lib'),
     },
+  },
+  server: {
+    port: 3000,
+    open: true,
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
   },
 });

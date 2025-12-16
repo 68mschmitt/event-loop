@@ -33,11 +33,15 @@
     "skipLibCheck": true,
 
     // Path Aliases
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "@/core/*": ["./src/core/*"],
-      "@/ui/*": ["./src/ui/*"],
-      "@/utils/*": ["./src/utils/*"]
+      "@/*": ["./*"],
+      "@/core/*": ["./core/*"],
+      "@/state/*": ["./state/*"],
+      "@/components/*": ["./components/*"],
+      "@/animations/*": ["./animations/*"],
+      "@/styles/*": ["./styles/*"],
+      "@/lib/*": ["./lib/*"]
     }
   },
   "include": ["src/**/*", "tests/**/*"],
