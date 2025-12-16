@@ -1,63 +1,129 @@
-import { Task, TaskType, TaskState } from '@/core/types/task';
+import { motion, HTMLMotionProps } from 'framer-motion';
+import { Task, TaskState } from '@/core/types/task';
 import { cn } from '@/lib/utils';
+import { getTaskColors, getStateOpacity, getTaskTypeLabel } from '@/utils/taskColors';
+import { taskNodeVariants, pulseVariants, stateTransition } from '@/animations/variants';
 
-interface TaskNodeProps {
+interface TaskNodeProps extends Omit<HTMLMotionProps<'div'>, 'onClick'> {
   task: Task;
   onClick?: () => void;
   className?: string;
+  layoutId?: string;
+  isAnimating?: boolean;
 }
 
-// Map task types to Tailwind colors
-const typeColors: Record<TaskType, string> = {
-  [TaskType.SYNC]: 'bg-blue-500',
-  [TaskType.TIMER]: 'bg-orange-500',
-  [TaskType.MICROTASK]: 'bg-purple-500',
-  [TaskType.PROMISE]: 'bg-purple-600',
-  [TaskType.ASYNC_CONTINUATION]: 'bg-purple-600',
-  [TaskType.FETCH]: 'bg-green-500',
-  [TaskType.DOM_EVENT]: 'bg-pink-500',
-  [TaskType.RAF]: 'bg-yellow-500',
-  [TaskType.INTERVAL]: 'bg-orange-600',
+// Map task states to display labels
+const stateLabels: Record<TaskState, string> = {
+  [TaskState.CREATED]: 'Created',
+  [TaskState.WAITING_WEBAPI]: 'Waiting',
+  [TaskState.QUEUED]: 'Queued',
+  [TaskState.RUNNING]: 'Running',
+  [TaskState.COMPLETED]: 'Done',
+  [TaskState.CANCELED]: 'Canceled',
 };
 
-// Map task states to text colors
-const stateColors: Record<TaskState, string> = {
-  [TaskState.CREATED]: 'text-gray-400',
-  [TaskState.WAITING_WEBAPI]: 'text-gray-600',
-  [TaskState.QUEUED]: 'text-blue-400',
-  [TaskState.RUNNING]: 'text-green-400',
-  [TaskState.COMPLETED]: 'text-gray-300',
-  [TaskState.CANCELED]: 'text-red-400',
-};
-
-export function TaskNode({ task, onClick, className }: TaskNodeProps) {
-  const colorClass = typeColors[task.type];
-  const stateClass = stateColors[task.state];
+export function TaskNode({ 
+  task, 
+  onClick, 
+  className,
+  layoutId,
+  isAnimating = false,
+  ...motionProps 
+}: TaskNodeProps) {
+  const colors = getTaskColors(task.type);
+  const stateOpacity = getStateOpacity(task.state);
+  const typeLabel = getTaskTypeLabel(task.type);
+  const stateLabel = stateLabels[task.state];
   
+  // Determine animation variant based on task state
+  const getAnimationVariant = () => {
+    switch (task.state) {
+      case TaskState.RUNNING:
+        return 'running';
+      case TaskState.COMPLETED:
+        return 'completed';
+      case TaskState.CANCELED:
+        return 'error';
+      default:
+        return 'queued';
+    }
+  };
+
+  const isRunning = task.state === TaskState.RUNNING;
+
   return (
-    <div
+    <motion.div
+      layoutId={layoutId || `task-${task.id}`}
       onClick={onClick}
       className={cn(
-        'relative rounded-lg border border-zinc-700 bg-zinc-800 p-3 transition-colors',
-        onClick && 'cursor-pointer hover:border-zinc-600',
+        'relative rounded-lg border p-3 shadow-md',
+        'transition-all duration-200',
+        onClick && 'cursor-pointer',
+        stateOpacity,
         className
       )}
+      variants={taskNodeVariants}
+      animate={getAnimationVariant()}
+      initial="hidden"
+      exit="hidden"
+      transition={stateTransition}
+      {...(onClick && {
+        whileHover: { scale: 1.03, boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)' },
+        whileTap: { scale: 0.98 }
+      })}
+      {...motionProps}
     >
-      {/* Color indicator */}
-      <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-lg', colorClass)} />
+      {/* Color indicator bar */}
+      <div className={cn('absolute top-0 left-0 w-1 h-full rounded-l-lg', colors.bg)} />
+      
+      {/* Pulse indicator for running tasks */}
+      {isRunning && (
+        <motion.div
+          className={cn(
+            'absolute -top-1 -right-1 w-3 h-3 rounded-full',
+            colors.accent
+          )}
+          variants={pulseVariants}
+          initial="initial"
+          animate="pulse"
+        />
+      )}
       
       {/* Content */}
       <div className="ml-3">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-sm font-medium text-zinc-200">{task.label}</span>
-          <span className={cn('text-xs font-mono', stateClass)}>
-            {task.state}
+          <span className={cn('text-sm font-medium', colors.text)}>
+            {task.label}
+          </span>
+          <span 
+            className={cn(
+              'text-xs font-mono px-1.5 py-0.5 rounded',
+              isRunning && 'bg-green-900/30 text-green-300',
+              task.state === TaskState.COMPLETED && 'bg-gray-700/30 text-gray-400',
+              task.state === TaskState.QUEUED && 'bg-blue-900/30 text-blue-300',
+              task.state === TaskState.WAITING_WEBAPI && 'bg-yellow-900/30 text-yellow-300',
+              task.state === TaskState.CREATED && 'bg-gray-600/30 text-gray-400',
+              task.state === TaskState.CANCELED && 'bg-red-900/30 text-red-300'
+            )}
+          >
+            {stateLabel}
           </span>
         </div>
-        <div className="text-xs text-zinc-500 font-mono">
-          {task.type} • ID: {task.id.slice(0, 8)}
+        <div className="flex items-center gap-2 text-xs text-zinc-400 font-mono">
+          <span className={cn('px-1.5 py-0.5 rounded', colors.bg, colors.text)}>
+            {typeLabel}
+          </span>
+          <span className="text-zinc-600">•</span>
+          <span>{task.id.slice(0, 8)}</span>
         </div>
+        
+        {/* Show duration for running tasks */}
+        {isRunning && task.durationSteps > 1 && (
+          <div className="mt-1 text-xs text-zinc-500">
+            Steps: {task.durationSteps}
+          </div>
+        )}
       </div>
-    </div>
+    </motion.div>
   );
 }
