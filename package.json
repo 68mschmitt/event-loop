@@ -20,6 +20,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/react": "^16.3.1",
     "@types/node": "^25.0.2",
     "@types/react": "^19.2.7",
