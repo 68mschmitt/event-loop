@@ -50,7 +50,12 @@ export { WebApiType } from './webapi';
 
 // Scenario types
 export type {
-  Scenario,
+  ScenarioDefinition,
   ScenarioTask,
+  ScenarioTaskType,
+  ScenarioMetadata,
+  ScenarioConfig,
+  ScenarioDifficulty,
   ScenarioValidationError,
+  ScenarioValidationResult,
 } from './scenario';
