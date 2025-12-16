@@ -193,7 +193,7 @@ describe('executeRenderStep', () => {
     const newState = executeRenderStep(state);
 
     expect(newState.log).toHaveLength(1);
-    expect(newState.log[0]).toMatchObject({
+    expect(newState.log[0]!).toMatchObject({
       timestamp: 16,
       type: 'render',
       message: 'Render (style/layout/paint)',
@@ -218,8 +218,8 @@ describe('executeRenderStep', () => {
     const newState = executeRenderStep(state);
 
     expect(newState.log).toHaveLength(2);
-    expect(newState.log[0].message).toBe('Previous log');
-    expect(newState.log[1].type).toBe('render');
+    expect(newState.log[0]!.message).toBe('Previous log');
+    expect(newState.log[1]!.type).toBe('render');
   });
 });
 

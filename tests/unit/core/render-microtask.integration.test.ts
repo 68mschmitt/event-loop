@@ -6,7 +6,7 @@
 import { describe, it, expect } from 'vitest';
 import { createInitialState } from '@/core/simulator/state';
 import { drainMicrotaskQueue } from '@/core/simulator/microtask';
-import { shouldRender, executeRenderStep, invalidateRender } from '@/core/simulator/render';
+import { shouldRender, executeRenderStep } from '@/core/simulator/render';
 import { TaskType, TaskState } from '@/core/types/task';
 import type { Task } from '@/core/types/task';
 

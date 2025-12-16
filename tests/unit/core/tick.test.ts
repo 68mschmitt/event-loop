@@ -35,7 +35,7 @@ function createTask(overrides: Partial<Task>): Task {
     durationSteps: 1,
     effects: [],
     ...overrides,
-  };
+  } as Task;
 }
 
 describe('Priority Rules', () => {
@@ -379,18 +379,18 @@ describe('Tick Function', () => {
       // Tick 1: Dequeue macrotask and push to call stack
       state = tick(state);
       expect(state.callStack.length).toBe(1);
-      expect(state.callStack[0].stepsRemaining).toBe(3);
+      expect(state.callStack[0]!.stepsRemaining).toBe(3);
       expect(state.macroQueue.length).toBe(0);
 
       // Tick 2: Execute one step
       state = tick(state);
       expect(state.callStack.length).toBe(1);
-      expect(state.callStack[0].stepsRemaining).toBe(2);
+      expect(state.callStack[0]!.stepsRemaining).toBe(2);
 
       // Tick 3: Execute another step
       state = tick(state);
       expect(state.callStack.length).toBe(1);
-      expect(state.callStack[0].stepsRemaining).toBe(1);
+      expect(state.callStack[0]!.stepsRemaining).toBe(1);
 
       // Tick 4: Complete task
       state = tick(state);
@@ -411,7 +411,7 @@ describe('Tick Function', () => {
 
       // Start executing
       state = tick(state);
-      expect(state.callStack[0].task.state).toBe(TaskState.RUNNING);
+      expect(state.callStack[0]!.task.state).toBe(TaskState.RUNNING);
 
       // Complete
       state = tick(state);
@@ -449,7 +449,7 @@ describe('Tick Function', () => {
 
       // Microtask should execute first
       state = tick(state);
-      expect(state.callStack[0].task.id).toBe('micro-1');
+      expect(state.callStack[0]!.task.id).toBe('micro-1');
 
       // Complete microtask
       state = tick(state);
@@ -457,7 +457,7 @@ describe('Tick Function', () => {
 
       // Now macrotask executes
       state = tick(state);
-      expect(state.callStack[0].task.id).toBe('macro-1');
+      expect(state.callStack[0]!.task.id).toBe('macro-1');
     });
 
     it('drains 10 nested microtasks before first macrotask', () => {
@@ -507,11 +507,11 @@ describe('Tick Function', () => {
       const executionOrder: string[] = [];
 
       // Execute until macrotask starts
-      for (let tick_count = 0; tick_count < 30; tick_count++) {
+      for (let tickCount = 0; tickCount < 30; tickCount++) {
         state = tick(state);
 
         // Track what starts executing
-        const startLog = state.log[state.log.length - 1];
+        const startLog = state.log[state.log.length - 1]!;
         if (startLog && startLog.type === 'task-start') {
           executionOrder.push(startLog.taskId || '');
         }
@@ -519,7 +519,7 @@ describe('Tick Function', () => {
         // Break when macro starts
         if (
           state.callStack.length > 0 &&
-          state.callStack[0].task.id === 'macro-1'
+          state.callStack[0]!.task.id === 'macro-1'
         ) {
           break;
         }
@@ -558,7 +558,7 @@ describe('Tick Function', () => {
 
       // Should drain microtask first
       state = tick(state);
-      expect(state.callStack[0].task.type).toBe(TaskType.MICROTASK);
+      expect(state.callStack[0]!.task.type).toBe(TaskType.MICROTASK);
       expect(state.renderPending).toBe(true); // Still pending
     });
   });
@@ -582,7 +582,7 @@ describe('Tick Function', () => {
 
       state = tick(state);
 
-      expect(state.callStack[0].task.id).toBe('raf-1');
+      expect(state.callStack[0]!.task.id).toBe('raf-1');
       expect(state.rafQueue.length).toBe(0);
     });
   });
@@ -602,17 +602,17 @@ describe('Tick Function', () => {
 
       // Execute first
       state = tick(state);
-      expect(state.callStack[0].task.id).toBe('macro-1');
+      expect(state.callStack[0]!.task.id).toBe('macro-1');
       state = tick(state); // Complete
 
       // Execute second
       state = tick(state);
-      expect(state.callStack[0].task.id).toBe('macro-2');
+      expect(state.callStack[0]!.task.id).toBe('macro-2');
       state = tick(state); // Complete
 
       // Execute third
       state = tick(state);
-      expect(state.callStack[0].task.id).toBe('macro-3');
+      expect(state.callStack[0]!.task.id).toBe('macro-3');
     });
   });
 
@@ -646,7 +646,7 @@ describe('Tick Function', () => {
 
       expect(state.now).toBe(50);
       expect(state.macroQueue.length).toBe(1);
-      expect(state.macroQueue[0].id).toBe('timer-2');
+      expect(state.macroQueue[0]!.id).toBe('timer-2');
     });
   });
 

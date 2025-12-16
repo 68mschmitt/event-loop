@@ -25,7 +25,7 @@ function createTask(overrides: Partial<Task>): Task {
     durationSteps: 1,
     effects: [],
     ...overrides,
-  };
+  } as Task;
 }
 
 /**
@@ -36,7 +36,6 @@ function runToCompletion(state: ReturnType<typeof createInitialState>) {
   let ticks = 0;
 
   while (ticks < maxTicks) {
-    const prevState = state;
     state = tick(state);
     ticks++;
 
@@ -82,14 +81,14 @@ describe('Event Loop Integration', () => {
     expect(state.microQueue.length).toBe(1);
 
     // Run simulation
-    const { state: finalState, ticks: tickCount } = runToCompletion(state);
+    const { state: finalState } = runToCompletion(state);
 
     // Verify execution order in log
     const taskStarts = finalState.log.filter((entry) => entry.type === 'task-start');
     
     // Microtask should execute before timer
-    expect(taskStarts[0].taskId).toBe('micro-1');
-    expect(taskStarts[1].taskId).toBe('timer-1');
+    expect(taskStarts[0]!.taskId).toBe('micro-1');
+    expect(taskStarts[1]!.taskId).toBe('timer-1');
 
     // Time should have advanced to 100ms for timer
     expect(finalState.now).toBe(100);
@@ -150,9 +149,9 @@ describe('Event Loop Integration', () => {
     const taskStarts = finalState.log.filter((entry) => entry.type === 'task-start');
 
     // Both microtasks should execute before macrotask
-    expect(taskStarts[0].taskId).toBe('micro-1');
-    expect(taskStarts[1].taskId).toBe('micro-2');
-    expect(taskStarts[2].taskId).toBe('macro-1');
+    expect(taskStarts[0]!.taskId).toBe('micro-1');
+    expect(taskStarts[1]!.taskId).toBe('micro-2');
+    expect(taskStarts[2]!.taskId).toBe('macro-1');
   });
 
   it('demonstrates render timing with microtasks', () => {
@@ -172,7 +171,7 @@ describe('Event Loop Integration', () => {
 
     // Run one tick - should drain microtask first
     state = tick(state);
-    expect(state.callStack[0].task.id).toBe('micro-1');
+    expect(state.callStack[0]!.task.id).toBe('micro-1');
 
     // Complete microtask
     state = tick(state);
@@ -207,9 +206,9 @@ describe('Event Loop Integration', () => {
     );
 
     // Should advance to 25, then 50, then 100
-    expect(timeAdvances[0].message).toContain('25ms');
-    expect(timeAdvances[1].message).toContain('50ms');
-    expect(timeAdvances[2].message).toContain('100ms');
+    expect(timeAdvances[0]!.message).toContain('25ms');
+    expect(timeAdvances[1]!.message).toContain('50ms');
+    expect(timeAdvances[2]!.message).toContain('100ms');
 
     // Final time should be 100
     expect(finalState.now).toBe(100);
@@ -232,12 +231,12 @@ describe('Event Loop Integration', () => {
 
     // Start the task
     state = tick(state);
-    expect(state.callStack[0].stepsRemaining).toBe(5);
+    expect(state.callStack[0]!.stepsRemaining).toBe(5);
 
     // Execute 5 steps
     for (let i = 4; i >= 1; i--) {
       state = tick(state);
-      expect(state.callStack[0].stepsRemaining).toBe(i);
+      expect(state.callStack[0]!.stepsRemaining).toBe(i);
     }
 
     // Complete on final tick
@@ -287,9 +286,8 @@ describe('Event Loop Integration', () => {
     state = tick(state);
 
     // Render should happen now
-    const beforeRenderNow = state.now;
     state = tick(state);
-    const renderLog = state.log[state.log.length - 1];
+    const renderLog = state.log[state.log.length - 1]!;
     if (renderLog.type === 'render') {
       executionOrder.push('render');
     }
@@ -310,7 +308,7 @@ describe('Event Loop Integration', () => {
     
     // Macrotask should execute
     state = tick(state);
-    if (state.callStack.length > 0 && state.callStack[0].task.id === 'macro') {
+    if (state.callStack.length > 0 && state.callStack[0]!.task.id === 'macro') {
       executionOrder.push('macro-start');
     }
     state = tick(state);
@@ -318,7 +316,7 @@ describe('Event Loop Integration', () => {
     // Now simulation is complete except for rAF which waits for next frame
     // Let's verify the rAF is still in queue
     expect(state.rafQueue.length).toBe(1);
-    expect(state.rafQueue[0].id).toBe('raf');
+    expect(state.rafQueue[0]!.id).toBe('raf');
 
     expect(executionOrder).toEqual([
       'micro-start',

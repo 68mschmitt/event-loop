@@ -170,14 +170,14 @@ describe('drainMicrotaskQueue', () => {
     expect(logs).toHaveLength(4); // 2 starts + 2 completes
 
     // Verify order: micro-1 start, micro-1 complete, micro-2 start, micro-2 complete
-    expect(logs[0].message).toContain('Parent microtask');
-    expect(logs[0].type).toBe('task-start');
-    expect(logs[1].message).toContain('Parent microtask');
-    expect(logs[1].type).toBe('task-complete');
-    expect(logs[2].message).toContain('Nested microtask');
-    expect(logs[2].type).toBe('task-start');
-    expect(logs[3].message).toContain('Nested microtask');
-    expect(logs[3].type).toBe('task-complete');
+    expect(logs[0]!.message).toContain('Parent microtask');
+    expect(logs[0]!.type).toBe('task-start');
+    expect(logs[1]!.message).toContain('Parent microtask');
+    expect(logs[1]!.type).toBe('task-complete');
+    expect(logs[2]!.message).toContain('Nested microtask');
+    expect(logs[2]!.type).toBe('task-start');
+    expect(logs[3]!.message).toContain('Nested microtask');
+    expect(logs[3]!.type).toBe('task-complete');
   });
 
   it('handles 10 nested microtasks all drain before first macrotask', () => {
@@ -203,7 +203,7 @@ describe('drainMicrotaskQueue', () => {
     }
 
     const state = createTestState({
-      microQueue: [microtasks[0]], // Start with first microtask
+      microQueue: [microtasks[0]!], // Start with first microtask
       macroQueue: [
         {
           id: 'macro-1',
@@ -229,7 +229,7 @@ describe('drainMicrotaskQueue', () => {
 
     // Macrotask should still be in queue (not executed)
     expect(newState.macroQueue).toHaveLength(1);
-    expect(newState.macroQueue[0].label).toBe('Macrotask');
+    expect(newState.macroQueue[0]!.label).toBe('Macrotask');
 
     // Should have 20 logs (10 starts + 10 completes)
     const logs = newState.log.filter(
@@ -239,8 +239,8 @@ describe('drainMicrotaskQueue', () => {
 
     // Verify all microtasks executed in order
     for (let i = 1; i <= 10; i++) {
-      const startLog = logs[(i - 1) * 2];
-      const completeLog = logs[(i - 1) * 2 + 1];
+      const startLog = logs[(i - 1) * 2]!;
+      const completeLog = logs[(i - 1) * 2 + 1]!;
 
       expect(startLog.message).toContain(`Microtask ${i}`);
       expect(startLog.type).toBe('task-start');
@@ -268,8 +268,8 @@ describe('drainMicrotaskQueue', () => {
 
     // Should have one start and one complete log
     expect(newState.log).toHaveLength(2);
-    expect(newState.log[0].type).toBe('task-start');
-    expect(newState.log[1].type).toBe('task-complete');
+    expect(newState.log[0]!.type).toBe('task-start');
+    expect(newState.log[1]!.type).toBe('task-complete');
   });
 
   it('processes microtask effects like log entries', () => {
@@ -289,10 +289,10 @@ describe('drainMicrotaskQueue', () => {
 
     // Should have start, complete, and custom log
     expect(newState.log).toHaveLength(3);
-    expect(newState.log[0].type).toBe('task-start');
-    expect(newState.log[1].type).toBe('task-complete');
-    expect(newState.log[2].type).toBe('user');
-    expect(newState.log[2].message).toBe('Custom log message');
+    expect(newState.log[0]!.type).toBe('task-start');
+    expect(newState.log[1]!.type).toBe('task-complete');
+    expect(newState.log[2]!.type).toBe('user');
+    expect(newState.log[2]!.message).toBe('Custom log message');
   });
 
   it('processes invalidate-render effect', () => {
@@ -376,10 +376,10 @@ describe('drainMicrotaskQueue', () => {
     const taskOrder = logs
       .filter((l) => l.type === 'task-start')
       .map((l) => l.message);
-    expect(taskOrder[0]).toContain('Microtask 1');
-    expect(taskOrder[1]).toContain('Microtask 2');
-    expect(taskOrder[2]).toContain('Microtask 3');
-    expect(taskOrder[3]).toContain('Microtask 4');
+    expect(taskOrder[0]!).toContain('Microtask 1');
+    expect(taskOrder[1]!).toContain('Microtask 2');
+    expect(taskOrder[2]!).toContain('Microtask 3');
+    expect(taskOrder[3]!).toContain('Microtask 4');
   });
 
   it('documents starvation behavior - does not detect infinite loops', () => {

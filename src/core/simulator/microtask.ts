@@ -4,7 +4,7 @@
  */
 
 import type { SimulatorState, Frame, LogEntry } from '@/core/types/simulator';
-import type { Task, TaskEffect } from '@/core/types/task';
+import type { Task } from '@/core/types/task';
 import { TaskState } from '@/core/types/task';
 
 /**
@@ -40,10 +40,10 @@ export function drainMicrotaskQueue(state: SimulatorState): SimulatorState {
     const newMicroQueue = currentState.microQueue.slice(1);
 
     // Update task state to RUNNING and create call stack frame
-    const runningTask: Task = {
+    const runningTask = {
       ...microtask,
       state: TaskState.RUNNING,
-    };
+    } as Task;
 
     const frame: Frame = {
       task: runningTask,
@@ -85,7 +85,7 @@ function executeTaskCompletely(state: SimulatorState): SimulatorState {
 
   // Execute all steps
   while (currentState.callStack.length > 0) {
-    const frame = currentState.callStack[0];
+    const frame = currentState.callStack[0]!;
     const newStepsRemaining = frame.stepsRemaining - 1;
 
     if (newStepsRemaining > 0) {
@@ -101,10 +101,10 @@ function executeTaskCompletely(state: SimulatorState): SimulatorState {
       };
     } else {
       // Task completed - pop frame and process effects
-      const completedTask: Task = {
+      const completedTask = {
         ...frame.task,
         state: TaskState.COMPLETED,
-      };
+      } as Task;
 
       const logEntry: LogEntry = {
         timestamp: currentState.now,
@@ -148,33 +148,33 @@ function processTaskEffects(state: SimulatorState, task: Task): SimulatorState {
         };
 
         if (effectPayload.queueType === 'micro') {
-          const enqueuedTask: Task = {
+          const enqueuedTask = {
             ...effectPayload.task,
             state: TaskState.QUEUED,
             enqueueSeq: newState.enqueueCounter,
-          };
+          } as Task;
           newState = {
             ...newState,
             microQueue: [...newState.microQueue, enqueuedTask],
             enqueueCounter: newState.enqueueCounter + 1,
           };
         } else if (effectPayload.queueType === 'macro') {
-          const enqueuedTask: Task = {
+          const enqueuedTask = {
             ...effectPayload.task,
             state: TaskState.QUEUED,
             enqueueSeq: newState.enqueueCounter,
-          };
+          } as Task;
           newState = {
             ...newState,
             macroQueue: [...newState.macroQueue, enqueuedTask],
             enqueueCounter: newState.enqueueCounter + 1,
           };
         } else if (effectPayload.queueType === 'raf') {
-          const enqueuedTask: Task = {
+          const enqueuedTask = {
             ...effectPayload.task,
             state: TaskState.QUEUED,
             enqueueSeq: newState.enqueueCounter,
-          };
+          } as Task;
           newState = {
             ...newState,
             rafQueue: [...newState.rafQueue, enqueuedTask],

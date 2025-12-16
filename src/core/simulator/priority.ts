@@ -11,7 +11,7 @@ import type { SimulatorState } from '@/core/types/simulator';
  * Condition: Call stack is non-empty AND top frame has remaining steps
  */
 export function shouldExecuteCallStack(state: SimulatorState): boolean {
-  return state.callStack.length > 0 && state.callStack[0].stepsRemaining > 0;
+  return state.callStack.length > 0 && state.callStack[0]!.stepsRemaining > 0;
 }
 
 /**
